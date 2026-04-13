@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research Dissemination with n8n</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #2c2e59;
+      --primary-light: #3d4080;
+      --border: #d0d1e0;
+      --bg: #ffffff;
+      --surface: #f4f4f8;
+      --text: #1a1b2e;
+      --text-muted: #6b6c82;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Poppins', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--primary);
+      color: #fff;
+      padding: 3rem 2rem;
+    }
+
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .header-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 0.75rem;
+    }
+
+    header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 600;
+      line-height: 1.2;
+      color: #fff;
+      margin-bottom: 0.75rem;
+    }
+
+    .header-sub {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 540px;
+      line-height: 1.6;
+    }
+
+    .header-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .meta-pill {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.55);
+    }
+
+    /* ── Nav ── */
+    .progress-nav {
+      background: var(--primary);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0 2rem;
+    }
+
+    .progress-nav-inner {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .progress-nav-inner::-webkit-scrollbar { display: none; }
+
+    .nav-step {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      white-space: nowrap;
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+    }
+
+    .nav-step:hover {
+      color: #fff;
+      border-bottom-color: rgba(255,255,255,0.4);
+    }
+
+    .nav-step .step-num {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      opacity: 0.5;
+    }
+
+    /* ── Main ── */
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    /* ── Section ── */
+    .section {
+      margin-bottom: 3.5rem;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--primary);
+    }
+
+    .section-num {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .section h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    p {
+      color: var(--text);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    p + p { margin-top: 0.75rem; }
+
+    strong { font-weight: 600; }
+    em { font-style: italic; }
+
+    /* ── Callouts ── */
+    .callout {
+      display: flex;
+      gap: 0.75rem;
+      padding: 1rem 1.2rem;
+      margin: 1.25rem 0;
+      border-left: 3px solid var(--primary);
+      background: var(--surface);
+      font-size: 0.9rem;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .callout-icon { flex-shrink: 0; }
+
+    .callout strong {
+      color: var(--primary);
+    }
+
+    .callout-warn { border-left-color: #b91c1c; background: #fef2f2; }
+    .callout-warn strong { color: #b91c1c; }
+    .callout-tip  { border-left-color: #166534; background: #f0fdf4; }
+    .callout-tip  strong { color: #166534; }
+    .callout-info { border-left-color: var(--primary); background: var(--surface); }
+
+    /* ── Steps ── */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin: 1.25rem 0;
+    }
+
+    .step-card {
+      display: grid;
+      grid-template-columns: 2rem 1fr;
+      gap: 0 1rem;
+      padding: 1.1rem 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+    }
+
+    .step-badge {
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 50%;
+      background: var(--primary);
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .step-content h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--text);
+    }
+
+    .step-content p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .step-content p + p { margin-top: 0.4rem; }
+
+    /* ── Code block ── */
+    .code-block {
+      position: relative;
+      background: var(--primary);
+      color: #e0e1f0;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.7;
+      padding: 1.2rem 1.4rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      margin: 1.25rem 0;
+    }
+
+    .code-block .comment { color: rgba(255,255,255,0.3); }
+    .code-block .key     { color: #a5b4fc; }
+    .code-block .value   { color: #86efac; }
+    .code-block .string  { color: #93c5fd; }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.7rem;
+      right: 0.7rem;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 3px;
+      padding: 0.25em 0.6em;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .copy-btn:hover { background: rgba(255,255,255,0.18); color: #fff; }
+
+    /* ── Workflow diagram (vertical) ── */
+    .workflow-diagram {
+      margin: 1.25rem 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .wf-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 0 1.25rem;
+      align-items: stretch;
+    }
+
+    /* Left column: box + connector line */
+    .wf-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .wf-box {
+      width: 80px;
+      min-height: 68px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.2rem;
+      text-align: center;
+      color: var(--text);
+      padding: 0.5rem 0.3rem;
+      flex-shrink: 0;
+    }
+
+    .wf-icon { font-size: 1.3rem; }
+
+    .wf-box-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      line-height: 1.3;
+      color: var(--text);
+    }
+
+    .wf-connector {
+      width: 2px;
+      flex: 1;
+      min-height: 12px;
+      background: var(--border);
+    }
+
+    .wf-connector-end {
+      /* no line after the last item */
+      display: none;
+    }
+
+    /* Right column: label + description, vertically centred on the box */
+    .wf-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0.5rem 0;
+      padding-bottom: 1rem; /* space matching the connector gap */
+    }
+
+    .wf-row:last-child .wf-right {
+      padding-bottom: 0.5rem;
+    }
+
+    .wf-step-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.2rem;
+    }
+
+    .wf-step-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .wf-step-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* ── API key decode box ── */
+    .key-decode-box {
+      margin-top: 0.9rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .key-decode-row {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .key-decode-input {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      padding: 0.5rem 0.75rem;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      outline: none;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.15s;
+    }
+
+    .key-decode-input:focus {
+      border-color: var(--primary);
+    }
+
+    .key-decode-btn {
+      font-family: var(--sans);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .key-decode-btn:hover { background: var(--primary-light); }
+
+    .key-result {
+      display: none;
+      align-items: center;
+      gap: 0.6rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.55rem 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .key-result.visible { display: flex; }
+
+    .key-result-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .key-result code {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--primary);
+      word-break: break-all;
+      flex: 1;
+    }
+
+    .key-copy-btn {
+      font-family: var(--sans);
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.3rem 0.7rem;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s;
+    }
+
+    .key-copy-btn:hover { background: var(--primary-light); }
+
+    .key-decode-error {
+      display: none;
+      font-size: 0.8rem;
+      color: #b91c1c;
+      font-weight: 500;
+    }
+
+    .key-decode-error.visible { display: block; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .header-meta { gap: 0.75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<header>
+  <div class="header-inner">
+    <p class="header-eyebrow">Practical Workshop &nbsp;/&nbsp; Research Dissemination</p>
+    <h1>Automating Your Research<br/>with <span>n8n</span> Workflows</h1>
+    <p class="header-sub">A step-by-step activity for student nurses — no coding experience needed. You'll use a free online tool to automatically read research papers and email you a plain-English summary of each one.</p>
+
+  </div>
+</header>
+
+<!-- ═══════════ STICKY NAV ═══════════ -->
+<nav class="progress-nav" aria-label="Activity sections">
+  <div class="progress-nav-inner">
+    <a href="#overview"  class="nav-step"><span class="step-num">0</span>Overview</a>
+    <a href="#setup"     class="nav-step"><span class="step-num">1</span>Setup</a>
+    <a href="#api-key"   class="nav-step"><span class="step-num">2</span>API Key</a>
+    <a href="#activity1" class="nav-step"><span class="step-num">3</span>Activity</a>
+    <a href="#run"       class="nav-step"><span class="step-num">4</span>Run &amp; Test</a>
+    <a href="#extension" class="nav-step"><span class="step-num">5</span>What's Next</a>
+  </div>
+</nav>
+
+<!-- ═══════════ MAIN ═══════════ -->
+<main>
+
+  <!-- 0: Overview -->
+  <section class="section" id="overview">
+    <div class="section-header">
+      <span class="section-num">00 —</span>
+      <h2>What is this activity?</h2>
+    </div>
+
+    <p>In this workshop you will use <strong>n8n</strong> — a free, visual automation tool that works entirely in your web browser — to build a workflow that reads research papers sent to your email inbox and automatically writes a plain-English summary of each one. A <strong>lay summary</strong> is a short, jargon-free explanation of a research paper written for a general audience, not just specialists. You do not need to write any code. Think of n8n as a series of connected steps: each step does one job, and together they run automatically, one after another.</p>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div>
+          <strong>What you'll build</strong>
+        A workflow that watches your Gmail inbox, reads a PDF research paper attached to an incoming email, and automatically replies with a plain-English lay summary of the paper.
+      </div>
+    </div>
+
+    <!-- Workflow preview diagram -->
+    <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.8rem; margin-top: 1.25rem;"><strong>Your workflow</strong> — single paper lay summary:</p>
+    <div class="workflow-diagram" role="list" aria-label="Workflow steps">
+
+      <div class="wf-row" role="listitem">
+        <div class="wf-left">
+          <div class="wf-box"><span class="wf-icon">📬</span><span class="wf-box-label">Gmail Trigger</span></div>
+          <div class="wf-connector"></div>
+        </div>
+        <div class="wf-right">
+          <span class="wf-step-label">Step 1</span>
+          <span class="wf-step-title">Watch for an incoming email</span>
+          <span class="wf-step-desc">The workflow starts when a new email arrives in your inbox. The trigger also downloads any PDF attachments automatically.</span>
+        </div>
+      </div>
+
+      <div class="wf-row" role="listitem">
+        <div class="wf-left">
+          <div class="wf-box"><span class="wf-icon">📄</span><span class="wf-box-label">Extract Text</span></div>
+          <div class="wf-connector"></div>
+        </div>
+        <div class="wf-right">
+          <span class="wf-step-label">Step 2</span>
+          <span class="wf-step-title">Pull the text out of the PDF</span>
+          <span class="wf-step-desc">The PDF is opened and its text is copied out so the AI can read it.</span>
+        </div>
+      </div>
+
+      <div class="wf-row" role="listitem">
+        <div class="wf-left">
+          <div class="wf-box"><span class="wf-icon">🤖</span><span class="wf-box-label">AI Summary</span></div>
+          <div class="wf-connector"></div>
+        </div>
+        <div class="wf-right">
+          <span class="wf-step-label">Step 3</span>
+          <span class="wf-step-title">Write a plain-English lay summary</span>
+          <span class="wf-step-desc">The AI reads the paper and writes a short, jargon-free summary.</span>
+        </div>
+      </div>
+
+      <div class="wf-row" role="listitem">
+        <div class="wf-left">
+          <div class="wf-box"><span class="wf-icon">↩️</span><span class="wf-box-label">Reply</span></div>
+          <div class="wf-connector wf-connector-end"></div>
+        </div>
+        <div class="wf-right">
+          <span class="wf-step-label">Step 4</span>
+          <span class="wf-step-title">Reply with the summary</span>
+          <span class="wf-step-desc">The lay summary is sent back as an email reply to the original message.</span>
+        </div>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- 1: Setup -->
+  <section class="section" id="setup">
+    <div class="section-header">
+      <span class="section-num">01 —</span>
+      <h2>Getting set up</h2>
+    </div>
+
+    <p>Before building your workflow, you need a free n8n account and a Google account to use for sending and receiving emails. Go to <strong>n8n.io</strong> and sign up for a free trial. There is nothing to download or install — everything runs in your browser.</p>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-badge">1</div>
+        <div class="step-content">
+          <h3>Sign up for n8n</h3>
+          <p>Go to <strong>n8n.io</strong>, click <strong>Get started free</strong>, and create an account. Once you are signed in you should see a blank screen with the message "Add first step" — that means you are ready to build.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">2</div>
+        <div class="step-content">
+          <h3>Set up a Google account for this activity</h3>
+          <p>The workflow you are about to build will watch a Gmail inbox for new emails, read any PDF attachments, and send an automated reply with the summaries. You need a Google account to make this work. You can use an <strong>existing Google account</strong> or <strong>create a new one</strong> at <strong>accounts.google.com</strong> — a new account is a good idea if you would rather keep this activity separate from your personal email.</p>
+          <p>Either way, make a note of the Gmail address. You will send your research paper to this address, and the workflow will automatically reply with the summary.</p>
+          <div class="callout callout-tip" style="margin-top: 0.75rem;">
+            <span class="callout-icon">✅</span>
+            <div>
+              <strong>Check before moving on:</strong>
+              Make sure you can log in to the Google account you've chosen. You'll need it in Section 2 to connect n8n, and again when you send your test emails.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2: API Key -->
+  <section class="section" id="api-key">
+    <div class="section-header">
+      <span class="section-num">02 —</span>
+      <h2>Your API key &amp; Google account</h2>
+    </div>
+
+    <p>Your workflow needs two things to work. The first is an <strong>OpenAI API key</strong> — think of it as a personalised pass that lets n8n use the AI on your behalf. The second is a connection to your <strong>Google account</strong>, which n8n uses both to watch for incoming emails with PDFs attached, and to send the automated reply.</p>
+
+    <div class="callout callout-warn">
+      <span class="callout-icon">⚠️</span>
+      <div>
+        <strong>Keep your API key private.</strong>
+        Do not share it with anyone or paste it into a chat message. It is linked to a real account and could run up costs if someone else uses it.
+      </div>
+    </div>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">📧</span>
+      <div>
+        <strong>Use your own Google account for Gmail access.</strong>
+        You will connect n8n to a Google account that you control. You can use an existing Gmail address, or create a new one specifically for this activity at <strong>accounts.google.com</strong>. Either way, it should be an account you are comfortable using with n8n — you will be granting the tool permission to read and send emails on your behalf.
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-badge">1</div>
+        <div class="step-content">
+          <h3>Unlock your OpenAI API key</h3>
+          <p>Your facilitator will give you a password for today's session. Type it in the box below and click <strong>Reveal</strong> to see your OpenAI API key.</p>
+          <div class="key-decode-box">
+            <div class="key-decode-row">
+              <input type="password" id="decode-password" class="key-decode-input" placeholder="Enter session password" autocomplete="off" spellcheck="false" />
+              <button class="key-decode-btn" onclick="decodeApiKey()">Reveal</button>
+            </div>
+            <p class="key-decode-error" id="key-decode-error">Incorrect password — please try again.</p>
+            <div class="key-result" id="key-result-openai">
+              <span class="key-result-label">OpenAI API key:</span>
+              <code id="key-output-openai"></code>
+              <button class="key-copy-btn" id="key-copy-openai" onclick="copyField('key-output-openai','key-copy-openai')">Copy</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">2</div>
+        <div class="step-content">
+          <h3>Save the OpenAI key inside n8n</h3>
+          <p>In n8n, go to <strong>Settings → Credentials → Add credential</strong>. Search for <strong>OpenAI</strong>, paste your key into the field that appears, and click <strong>Save</strong>. n8n stores it securely so you only need to do this once.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">3</div>
+        <div class="step-content">
+          <h3>Connect your Google account</h3>
+          <p>Still in <strong>Settings → Credentials → Add credential</strong>, search for <strong>Gmail</strong> and select it. Click <strong>Sign in with Google</strong> and sign in with your chosen Google account — either an existing one or a new one you have created for this session. Click <strong>Save</strong> once connected.</p>
+          <p>This Gmail connection will be used to watch for incoming emails with PDFs attached, and to send the automated reply.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3: Activity 1 -->
+  <section class="section" id="activity1">
+    <div class="section-header">
+      <span class="section-num">03 —</span>
+      <h2>The activity: Reply with a lay summary</h2>
+    </div>
+
+    <p>In this activity you will build a workflow that watches your Gmail inbox for a new email with a research paper attached, reads the PDF, and automatically replies to the sender with a plain-English lay summary of the paper.</p>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>How it works</strong>
+        You send an email to your Google account with one PDF attached. The workflow detects the new email, extracts the text from the PDF, asks the AI to write a plain-English summary, and replies to your email automatically.
+      </div>
+    </div>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-badge">1</div>
+        <div class="step-content">
+          <h3>Watch for incoming emails and download the attachment</h3>
+          <p>Click the <strong>+</strong> button on the n8n canvas and search for <strong>"Gmail Trigger"</strong>. Select it and choose your saved Gmail credential from the dropdown. Set <strong>Event</strong> to <strong>Message Received</strong>.</p>
+          <p>Then, uncheck <strong>"Simplify"</strong>, click <strong>Add option</strong> and add <strong>Download Attachments</strong> — turn this on. Also add the <strong>Attachment Prefix</strong> option and set it to <strong>attachment_</strong>. This tells the trigger to save any PDF files attached to the incoming email so the next step can read them.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">2</div>
+        <div class="step-content">
+          <h3>Extract the text from the PDF</h3>
+          <p>Click <strong>+</strong> and search for <strong>"Extract from File"</strong>. Set the operation to <strong>Extract Document Text</strong> and set the <strong>Input Binary Field</strong> to <strong>attachment_0</strong>.</p>
+          <p>"Input Binary Field" is just n8n's name for the attached file it should read. The value <strong>attachment_0</strong> refers to the first attachment — the prefix you set in step 1, with a zero added on the end to indicate the first file. This step opens the PDF and converts its contents to plain text so the AI can read it, similar to copying and pasting text out of a document.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">3</div>
+        <div class="step-content">
+          <h3>Ask the AI to write a lay summary</h3>
+          <p>Click <strong>+</strong> and search for <strong>"OpenAI"</strong>. Set the operation to <strong>Message a Model</strong> and choose your saved credential. Set the <strong>Model</strong> to <strong>GPT-5.4-NANO</strong> In the <strong>User Message</strong> field, write your instruction — for example:</p>
+          <p><em>"Write a lay summary of the following research paper in plain English, suitable for a general audience with no specialist knowledge. Use 3–4 sentences. Paper text: {{ $json.text }}"</em></p>
+          <p>The <code style="font-family: var(--mono); font-size: 0.85em;">{{ $json.text }}</code> part is a placeholder that n8n replaces with the actual extracted paper text from the previous step.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">4</div>
+        <div class="step-content">
+          <h3>Reply to the original email</h3>
+          <p>Click <strong>+</strong> and search for <strong>"Gmail"</strong>. Select it, choose your credential, and set the operation to <strong>Reply to Message</strong>.</p>
+          <p>For the <strong>Message ID</strong> field, you need to tell n8n which email to reply to. Click inside the field, then look at the left-hand panel — it shows the data produced by each previous step. Find the <strong>Gmail Trigger</strong> entry, expand it, and drag the <strong>id</strong> value into the field. n8n will fill in the expression for you automatically. Then set the <strong>Message</strong> field to:</p>
+          <p><code style="font-family: var(--mono); font-size: 0.85em;">{{ $json.output[0].content[0].text }}</code></p>
+          <p>This tells n8n to insert the AI's summary as the body of the reply.</p>
+          <div class="callout callout-tip" style="margin-top: 0.75rem;">
+            <span class="callout-icon">✅</span>
+            <div>
+              <strong>Test it:</strong>
+              Send an email to your Google account with one PDF research paper attached. Press <strong>Test workflow</strong> in n8n and watch each step light up. After a few seconds you should receive a reply containing a plain-English summary of the paper.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4: Run & Test -->
+  <section class="section" id="run">
+    <div class="section-header">
+      <span class="section-num">04 —</span>
+      <h2>Running &amp; testing your workflow</h2>
+    </div>
+
+    <p>Before running everything at once, it is worth testing each step individually to catch any problems early.</p>
+
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-badge">1</div>
+        <div class="step-content">
+          <h3>Test each step on its own</h3>
+          <p>Click any step on the screen and press <strong>"Test step"</strong> (the play button inside the settings panel). n8n will run just that step and show you the result on the right-hand side. Check it looks right before moving on to the next one.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">2</div>
+        <div class="step-content">
+          <h3>Run the whole workflow</h3>
+          <p>Press the <strong>"Test workflow"</strong> button at the bottom of the screen. You'll be able to watch each step light up as it runs. If a step turns red, click on it to see the error message — most problems are caused by a typo in a field or a credential that hasn't been connected yet.</p>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-badge">3</div>
+        <div class="step-content">
+          <h3>Check your inbox for the reply</h3>
+          <p>If the Gmail reply step shows a green tick, the reply has been sent. Open your inbox and check the reply has arrived — it should contain a short plain-English summary of your paper. If the summary looks wrong or is missing, click the <strong>OpenAI</strong> step in your workflow to see exactly what the AI produced, and check the prompt you typed in.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">✅</span>
+      <div>
+        <strong>Check the run history</strong>
+        After running, go to <strong>Executions</strong> in the left-hand menu to see a record of everything that happened. Click on any run to see the result at each step — useful if a summary came out blank or the reply failed to send.
+      </div>
+    </div>
+  </section>
+
+
+  <!-- 5: What's Next -->
+  <section class="section" id="extension">
+    <div class="section-header">
+      <span class="section-num">05 —</span>
+      <h2>What else could you do with n8n?</h2>
+    </div>
+
+    <p>The workflow you have just built is a small example of what automation can do. The same principles — watch for something, do something with it, send a result somewhere — can be applied to almost anything that involves information moving between systems. Here are a few ideas pitched directly at nursing practice and study.</p>
+
+    <div class="callout callout-info">
+      <span class="callout-icon">💡</span>
+      <div>
+        <strong>These are just ideas to spark your imagination.</strong>
+        You do not need to build any of these today. Each one could be put together using the same approach you used in the activity — a trigger, a few processing steps, and an action at the end.
+      </div>
+    </div>
+
+    <div class="steps">
+
+      <div class="step-card">
+        <div class="step-badge">💬</div>
+        <div class="step-content">
+          <h3>Get a Slack or Teams message when a new guideline is published</h3>
+          <p>Many professional bodies and NHS trusts publish updates via RSS feeds — a simple web feed that lists new content as it appears. You could build a workflow that checks a feed once a day and posts a short summary of any new guidance directly to a team Slack channel or Microsoft Teams group, so nobody has to remember to check manually.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">📅</div>
+        <div class="step-content">
+          <h3>Send yourself a weekly reading digest</h3>
+          <p>Rather than reacting to individual emails, you could set a workflow to run every Monday morning. It could pull together a handful of recent papers from a database or journal feed, summarise each one, and email you a neatly formatted digest — ready to read over your morning coffee before the week begins.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">📋</div>
+        <div class="step-content">
+          <h3>Log every summary to a shared spreadsheet</h3>
+          <p>You could extend today's workflow to also write each summary to a Google Sheet alongside the paper title, date, and topic. Over time this builds a searchable record of all the research you have reviewed — useful for reflective portfolios, evidence logs, or just keeping track of what you have read.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">🔔</div>
+        <div class="step-content">
+          <h3>Alert your team when a patient-relevant keyword appears in new research</h3>
+          <p>You could set up a workflow that scans new publications for specific terms — a drug name, a condition, a procedure your ward specialises in — and sends a notification to a shared inbox or channel only when something relevant is found. Instead of reading everything, your team only hears about research that matters to them.</p>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-badge">🌐</div>
+        <div class="step-content">
+          <h3>Translate a summary into another language</h3>
+          <p>n8n can connect to translation services as easily as it connects to AI. A small addition to today's workflow could take the lay summary and translate it into any language — useful for sharing research findings with colleagues, patients, or families whose first language is not English.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout callout-tip">
+      <span class="callout-icon">✅</span>
+      <div>
+        <strong>Where to go next</strong>
+        The n8n community forum at <strong>community.n8n.io</strong> has thousands of ready-made workflow templates you can import and adapt. Search for the tool or service you want to connect — chances are someone has already built a starting point.
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<!-- ═══════════ SCRIPT ═══════════ -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+<script>
+  /*
+  ══════════════════════════════════════════════════════════════════
+  FACILITATOR SETUP INSTRUCTIONS
+  ══════════════════════════════════════════════════════════════════
+
+  Before running a session you need to encrypt the OpenAI API key
+  using the session password, then paste the result into the
+  variable below. Here is how to do it:
+
+  STEP 1 — Choose a session password
+  ─────────────────────────────────────────────────────────────────
+  Pick a short, memorable word or phrase (e.g. "nursing2026").
+  You will say this out loud to participants at the start of the
+  session. Do NOT write it anywhere in this file.
+
+  STEP 2 — Open this page in a browser and open the console
+  ─────────────────────────────────────────────────────────────────
+  Open index.html in Chrome or Firefox, then press F12 (Windows)
+  or Cmd+Option+I (Mac) to open the developer tools. Click the
+  "Console" tab. CryptoJS is already loaded on this page, so you
+  can run encryption commands directly here.
+
+  STEP 3 — Encrypt the OpenAI API key
+  ─────────────────────────────────────────────────────────────────
+  Run the command below in the console, replacing the placeholder
+  text with your real key and your real password. Copy the output
+  string (it will look like a long string starting with "U2Fsd…").
+
+    CryptoJS.AES.encrypt('sk-YOUR-REAL-OPENAI-KEY', 'your-session-password').toString()
+
+  STEP 4 — Paste the encrypted string below
+  ─────────────────────────────────────────────────────────────────
+  Replace the placeholder value in the variable below with the
+  encrypted string you copied in step 3.
+
+  STEP 5 — Save and distribute the file
+  ─────────────────────────────────────────────────────────────────
+  Save this file and share it with participants (e.g. via a shared
+  link or the session VLE page). Tell them the session password
+  verbally at the start — it must never appear in this file.
+
+  ══════════════════════════════════════════════════════════════════
+  */
+
+  // ── Paste your encrypted value here ────────────────
+  const ENCRYPTED_OPENAI_KEY = 'U2FsdGVkX1+7jlbfpCZe8TL6NvCIuVtItoAPSXP9Zp05G2iT37TEkgdIjcudVUi6P7bRSPhUy6JbIq5tcEtrbKnX2EAxcjfm6uHd8rBgqtbZUeVQsWNAT85R25k6sbi1y9yuaZ54Gqq85cuiurEFIw/FCvseaP5Bl/kaMVGkBdrgt5y+xq2HGSx0iBb8vywkscuhIty/XZhhK8S7tntB9RsddZcSWSKvK8XZepD/HUmZAQADJROm4PTgPd8Nq2R8';
+  // ───────────────────────────────────────────────────
+
+  function decodeApiKey() {
+    const password = document.getElementById('decode-password').value;
+    const errorEl  = document.getElementById('key-decode-error');
+
+    errorEl.classList.remove('visible');
+    document.getElementById('key-result-openai').classList.remove('visible');
+
+    try {
+      const bytes = CryptoJS.AES.decrypt(ENCRYPTED_OPENAI_KEY, password);
+      const text  = bytes.toString(CryptoJS.enc.Utf8);
+      if (!text || text.length < 10) {
+        errorEl.classList.add('visible');
+        return;
+      }
+      document.getElementById('key-output-openai').textContent = text;
+      document.getElementById('key-result-openai').classList.add('visible');
+    } catch (e) {
+      errorEl.classList.add('visible');
+    }
+  }
+
+  // Allow pressing Enter in the password field
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('decode-password')
+      .addEventListener('keydown', e => { if (e.key === 'Enter') decodeApiKey(); });
+  });
+
+  function copyField(outputId, btnId) {
+    const text = document.getElementById(outputId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById(btnId);
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+
+  // ── Copy code block ──────────────────────────────────────────
+  function copyCode(btn) {
+    const block = btn.closest('.code-block');
+    const raw   = block.innerText.replace('Copy\n', '').trim();
+    navigator.clipboard.writeText(raw).then(() => {
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 2000);
+    });
+  }
+</script>
+
+</body>
+</html>
